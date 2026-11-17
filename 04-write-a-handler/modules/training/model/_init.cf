@@ -1,0 +1,98 @@
+"""
+    Copyright 2026 Inmanta
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    Contact: code@inmanta.com
+"""
+import nokia_srlinux
+import nokia_srlinux::interface
+import nokia_srlinux::interface::subinterface
+import nokia_srlinux::interface::subinterface::ipv4
+import nokia_srlinux::network_instance
+import nokia_srlinux::network_instance::protocols
+import nokia_srlinux::network_instance::protocols::ospf
+import nokia_srlinux::network_instance::protocols::ospf::instance
+import nokia_srlinux::network_instance::protocols::ospf::instance::area
+import yang
+
+entity Router:
+    """A router in the lab."""
+    string name
+    std::ipv4_address mgmt_ip
+end
+
+entity Interface:
+    """A routed interface on a router."""
+    string name
+    std::ipv4_interface ip
+end
+
+Router.interfaces [1:] -- Interface.router [1]
+
+implementation router_config for Router:
+    device = nokia_srlinux::GnmiDevice(
+        mgmt_ip=self.mgmt_ip,
+        name=self.name,
+        yang_credentials=yang::Credentials(username="admin", password="NokiaSrl1!"),
+    )
+
+    for interface in self.interfaces:
+        nokia_srlinux::Interface(
+            device=device,
+            name=interface.name,
+            admin_state="enable",
+            subinterface=nokia_srlinux::interface::Subinterface(
+                x_index=0,
+                admin_state="enable",
+                ipv4=nokia_srlinux::interface::subinterface::Ipv4(
+                    admin_state="enable",
+                    address=nokia_srlinux::interface::subinterface::ipv4::Address(ip_prefix=interface.ip),
+                ),
+            ),
+        )
+    end
+
+nokia_srlinux::NetworkInstance(
+    device=device,
+    name="default",
+    admin_state="enable",
+    interface=[
+        nokia_srlinux::network_instance::Interface(name=f"{interface.name}.0")
+        for interface in self.interfaces
+    ],
+    protocols=nokia_srlinux::network_instance::Protocols(
+        ospf=nokia_srlinux::network_instance::protocols::Ospf(
+            instance=nokia_srlinux::network_instance::protocols::ospf::Instance(
+                name="1",
+                admin_state="enable",
+                version="srl_nokia-ospf-types:ospf-v2",
+                router_id=self.mgmt_ip,
+                area=nokia_srlinux::network_instance::protocols::ospf::instance::Area(
+                    area_id="0.0.0.0",
+                    interface=[
+                        nokia_srlinux::network_instance::protocols::ospf::instance::area::Interface(
+                            interface_name=f"{interface.name}.0",
+                        )
+                        for interface in self.interfaces
+                    ],
+                ),
+            ),
+        ),
+    ),
+)
+end
+
+implement Router using router_config
+implement Interface using std::none
+

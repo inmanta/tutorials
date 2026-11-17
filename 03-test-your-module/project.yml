@@ -1,0 +1,6 @@
+name: tutorial
+modulepath: libs
+downloadpath: libs
+install_mode: release
+pip:
+  index_url: https://packages.inmanta.com/public/quickstart/python/simple/

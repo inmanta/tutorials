@@ -1,0 +1,21 @@
+entity Subscriber:
+    """A subscriber container in the lab, managed through its REST API."""
+    string name
+    std::ipv4_address mgmt_ip
+    int api_port = 8080
+end
+
+index Subscriber(name)
+
+entity Interface extends std::PurgeableResource:
+    """A network interface on a subscriber."""
+    string name
+    int mtu = 1500
+end
+
+Subscriber.interfaces [0:] -- Interface.subscriber [1]
+
+index Interface(subscriber, name)
+
+implement Subscriber using std::none
+implement Interface using std::none

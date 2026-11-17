@@ -1,0 +1,29 @@
+import training
+
+training::Router(
+    name="spine",
+    mgmt_ip="172.30.0.100",
+    interfaces=[
+        training::Interface(name="ethernet-1/1", ip="10.10.11.1/30"),
+        training::Interface(name="ethernet-1/2", ip="10.10.21.1/30"),
+    ],
+)
+
+training::Router(
+    name="leaf1",
+    mgmt_ip="172.30.0.210",
+    interfaces=[training::Interface(name="ethernet-1/1", ip="10.10.11.2/30")],
+)
+
+training::Router(
+    name="leaf2",
+    mgmt_ip="172.30.0.220",
+    interfaces=[training::Interface(name="ethernet-1/1", ip="10.10.21.2/30")],
+)
+
+
+
+import subscriber
+
+east = subscriber::Subscriber(name="subscriber-east", mgmt_ip="172.30.0.6")
+subscriber::Interface(subscriber=east, name="eth2", mtu=1500)

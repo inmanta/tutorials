@@ -1,0 +1,9 @@
+libs/
+.inmanta
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
+lab/clab-*/
+lab/.*.bak
+.cfcache/
