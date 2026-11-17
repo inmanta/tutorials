@@ -35,13 +35,13 @@ containerlab deploy -t lab/topology.yml                    # Docker
 containerlab --runtime podman deploy -t lab/topology.yml   # Podman
 ```
 
-| Node              | Address        | Access                                           |
-| ----------------- | -------------- | ------------------------------------------------ |
-| `inmanta-server`  | `172.30.0.3`   | Web console at `http://172.30.0.3:8888`          |
-| `spine`           | `172.30.0.100` | `ssh admin@172.30.0.100`, password `NokiaSrl1!`  |
-| `leaf1`           | `172.30.0.210` | `ssh admin@172.30.0.210`, password `NokiaSrl1!`  |
-| `leaf2`           | `172.30.0.220` | `ssh admin@172.30.0.220`, password `NokiaSrl1!`  |
-| `subscriber-east` | `172.30.0.6`   | REST API at `http://172.30.0.6:8080/api/v2/docs` |
+| Node              | Address        | Access                                                                  |
+| ----------------- | -------------- | ----------------------------------------------------------------------- |
+| `inmanta-server`  | `172.30.0.3`   | Web console at `http://172.30.0.3:8888`                                 |
+| `spine`           | `172.30.0.100` | `ssh admin@172.30.0.100`, password `NokiaSrl1!`                         |
+| `leaf1`           | `172.30.0.210` | `ssh admin@172.30.0.210`, password `NokiaSrl1!`                         |
+| `leaf2`           | `172.30.0.220` | `ssh admin@172.30.0.220`, password `NokiaSrl1!`                         |
+| `subscriber-east` | `172.30.0.6`   | Web console at `http://172.30.0.6:8080`, REST API under `/api/v2/docs` |
 
 Remove it with `containerlab destroy -t lab/topology.yml`, with the same `--runtime` option.
 
