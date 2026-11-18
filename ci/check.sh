@@ -40,7 +40,7 @@ echo "spine: 2 full OSPF neighbors"
 step "02-first-module: the dry run of the model is empty"
 cd "$ROOT/02-first-module"
 cp ../01-first-config/.inmanta .
-pip install -q -e modules/training
+pip install -q -e modules/tutorial
 inmanta project install
 $API . auto-deploy-off
 inmanta export
@@ -49,14 +49,14 @@ $API . promote
 $API . auto-deploy-on
 
 step "03-test-your-module: six passing tests"
-cd "$ROOT/03-test-your-module/modules/training"
+cd "$ROOT/03-test-your-module/modules/tutorial"
 pip install -q -e . -r requirements.dev.txt
 pytest -q tests | tail -1
 
 step "04-write-a-handler: lifecycle test, deploy to subscriber-east"
 cd "$ROOT/04-write-a-handler"
 cp ../01-first-config/.inmanta .
-pip install -q -e modules/training -e modules/subscriber
+pip install -q -e modules/tutorial -e modules/subscriber
 (cd modules/subscriber && pytest -q tests | tail -1)
 inmanta project install
 inmanta export

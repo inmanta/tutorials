@@ -2,12 +2,12 @@ import pytest
 from pytest_inmanta.plugin import Project
 
 LEAF = """
-import training
+import tutorial
 
-training::Router(
+tutorial::Router(
     name="leaf1",
     mgmt_ip="172.30.0.210",
-    interfaces=[training::Interface(name="ethernet-1/1", ip="{ip}")],
+    interfaces=[tutorial::Interface(name="ethernet-1/1", ip="{ip}")],
 )
 """
 
@@ -21,14 +21,14 @@ def test_one_router(project: Project) -> None:
 
 
 SPINE = """
-import training
+import tutorial
 
-training::Router(
+tutorial::Router(
     name="spine",
     mgmt_ip="172.30.0.100",
     interfaces=[
-        training::Interface(name="ethernet-1/1", ip="10.10.11.1/30"),
-        training::Interface(name="ethernet-1/2", ip="10.10.21.1/30"),
+        tutorial::Interface(name="ethernet-1/1", ip="10.10.11.1/30"),
+        tutorial::Interface(name="ethernet-1/2", ip="10.10.21.1/30"),
     ],
 )
 """
@@ -51,9 +51,9 @@ def test_router_without_interfaces(project: Project) -> None:
     with pytest.raises(Exception, match="interfaces"):
         project.compile(
             """
-            import training
+            import tutorial
 
-            training::Router(name="leaf3", mgmt_ip="172.30.0.230")
+            tutorial::Router(name="leaf3", mgmt_ip="172.30.0.230")
             """
         )
 

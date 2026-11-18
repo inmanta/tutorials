@@ -1,4 +1,4 @@
-# training Module
+# tutorial Module
 
 ## Running tests
 
