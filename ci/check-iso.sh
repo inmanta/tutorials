@@ -19,6 +19,7 @@ expect_neighbors() {
 }
 
 step "Lab with the Service Orchestrator"
+containerlab --runtime "$RUNTIME" destroy -t lab/topology.yml
 containerlab --runtime "$RUNTIME" deploy -t lab/topology-iso.yml --reconfigure
 until curl -sf http://172.30.0.3:8888/api/v1/serverstatus >/dev/null; do sleep 5; done
 

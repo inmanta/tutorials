@@ -52,10 +52,11 @@ Remove it with `containerlab destroy -t lab/topology.yml`, with the same `--runt
 The tutorial *Expose the model as a service* needs the Inmanta Service Orchestrator, with a license.
 `lab/topology-iso.yml` is the same lab with the Service Orchestrator in place of the open source orchestrator. Put
 your license in `lab/license/`, as `license.key` and `entitlement.jwe`, log in to `containers.inmanta.com` with the
-user `containers` and the token of your license, and start it:
+user `containers` and the token of your license, then stop the lab of `lab/topology.yml` and start this one:
 
 ```sh
-containerlab deploy -t lab/topology-iso.yml --reconfigure
+containerlab destroy -t lab/topology.yml
+containerlab deploy -t lab/topology-iso.yml
 ```
 
 The orchestrator mounts this repository at `/tutorials`: it compiles projects that are git repositories in it, and
