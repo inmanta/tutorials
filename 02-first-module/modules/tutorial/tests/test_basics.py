@@ -21,7 +21,7 @@ from pytest_inmanta.plugin import Project
 
 def test_basics(project: Project) -> None:
     project.compile("""
-            import training
+            import tutorial
         """)
 
     assert project.get_stdout() == "hello world\n"
