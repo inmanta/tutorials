@@ -7,3 +7,7 @@ __pycache__/
 lab/clab-*/
 lab/.*.bak
 .cfcache/
+packages/*.whl
+lab/license/*
+!lab/license/.gitkeep
+my-services-check/

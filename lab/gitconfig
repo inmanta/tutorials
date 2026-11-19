@@ -1,0 +1,3 @@
+# Git config of the orchestrator in the lab: it clones your projects from /tutorials, which belongs to another user.
+[safe]
+	directory = *

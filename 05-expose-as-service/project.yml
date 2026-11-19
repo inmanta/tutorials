@@ -1,0 +1,7 @@
+name: my-services
+modulepath: libs
+downloadpath: libs
+install_mode: release
+pip:
+  # The package index of the Inmanta Service Orchestrator: replace <token> with the token of your license.
+  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-10-stable/python/simple/
