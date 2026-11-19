@@ -1,0 +1,49 @@
+# The lab of the Inmanta tutorials with the Inmanta Service Orchestrator, for the LSM tutorial.
+# Put your license in lab/license/ first: license.key and entitlement.jwe.
+name: inmanta-tutorial
+mgmt:
+  network: inmanta-tutorial
+  ipv4-subnet: 172.30.0.0/16
+topology:
+  kinds:
+    srl:
+      image: ghcr.io/nokia/srlinux:26.7.2
+  nodes:
+    inmanta-server:
+      kind: linux
+      image: ${ORCHESTRATOR_IMAGE:=containers.inmanta.com/containers/service-orchestrator:10}
+      mgmt-ipv4: 172.30.0.3
+      env:
+        INMANTA_DATABASE_HOST: inmanta-db
+        INMANTA_DATABASE_USERNAME: inmanta
+        INMANTA_DATABASE_PASSWORD: inmanta
+        # The orchestrator installs modules from your package index and from the packages/ directory.
+        PIP_FIND_LINKS: /tutorials/packages
+        # The orchestrator clones your projects from /tutorials, which belongs to another user in the container.
+        GIT_CONFIG_GLOBAL: /tutorials/lab/gitconfig
+      binds:
+        - license/license.key:/etc/inmanta/license.key:ro
+        - license/entitlement.jwe:/etc/inmanta/entitlement.jwe:ro
+        - ..:/tutorials:ro
+    inmanta-db:
+      kind: linux
+      image: docker.io/library/postgres:16
+      mgmt-ipv4: 172.30.0.2
+      env:
+        POSTGRES_USER: inmanta
+        POSTGRES_PASSWORD: inmanta
+    spine:
+      kind: srl
+      type: ixr-d2
+      mgmt-ipv4: 172.30.0.100
+    leaf1:
+      kind: srl
+      type: ixr-d2
+      mgmt-ipv4: 172.30.0.210
+    leaf2:
+      kind: srl
+      type: ixr-d2
+      mgmt-ipv4: 172.30.0.220
+  links:
+    - endpoints: ["spine:e1-1", "leaf1:e1-1"]
+    - endpoints: ["spine:e1-2", "leaf2:e1-1"]

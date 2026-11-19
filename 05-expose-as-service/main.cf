@@ -1,0 +1,64 @@
+import lsm
+import lsm::fsm
+import tutorial
+import yang
+
+entity RouterService extends lsm::ServiceEntity:
+    """
+    A router of the lab, offered as a service.
+
+    :attr name: The name of the router.
+    :attr mgmt_ip: The management address the orchestrator configures the router on.
+    """
+    string name
+    std::ipv4_address mgmt_ip
+end
+
+entity InterfaceSpec extends lsm::EmbeddedEntity:
+    """
+    A routed interface of the router.
+
+    :attr name: The name of the interface, such as ethernet-1/1.
+    :attr ip: The address of the interface, with its prefix length.
+    """
+    string name
+    std::ipv4_interface ip
+    lsm::attribute_modifier ip__modifier="rw+"
+end
+
+RouterService.interfaces [1:] lsm::__rwplus__ InterfaceSpec._router [1]
+
+index InterfaceSpec(_router, name)
+
+index RouterService(name)
+
+implementation router for RouterService:
+    tutorial::Router(
+        name=self.name,
+        mgmt_ip=self.mgmt_ip,
+        interfaces=[tutorial::Interface(name=interface.name, ip=interface.ip) for interface in self.interfaces],
+    )
+    device = yang::GnmiDevice[name=self.name]
+    self.resources += device.yang_resource
+end
+
+implement RouterService using parents, router
+implement InterfaceSpec using parents
+
+binding = lsm::ServiceEntityBindingV2(
+    service_entity="__config__::RouterService",
+    lifecycle=lsm::fsm::simple,
+    service_entity_name="router",
+    service_identity="name",
+    service_identity_display_name="Router",
+)
+
+for instance in lsm::all(binding):
+    RouterService(
+        instance_id=instance["id"],
+        entity_binding=binding,
+        name=instance["attributes"]["name"],
+        mgmt_ip=instance["attributes"]["mgmt_ip"],
+        interfaces=[InterfaceSpec(**interface) for interface in instance["attributes"]["interfaces"]],
+    )
+end
